@@ -7,5 +7,8 @@ CREATE TABLE owners_and_pets (
     color VARCHAR(12),
     checkindate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-// had to add checkoutdate column after creating table
+
+// added checkoutdate column after creating table. Probably dont need it...
 ALTER TABLE owners_and_pets ADD COLUMN checkoutdate TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+INSERT INTO owners_and_pets (ownerfirstname) VALUES ('George')
