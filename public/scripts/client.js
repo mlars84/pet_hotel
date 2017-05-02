@@ -11,11 +11,28 @@ function onReady() {
 
 } // end OnReady
 
+function populateDropDown() {
+  $.ajax({
+    url: '/getOwners',
+    type: 'GET',
+    success: function(response) {
+      console.log(response);
+      var ownerNames = [];
+      $('#ownerName').empty();
+      for (var i = 0; i < response.length; i++) {
+        console.log(response[i]);
+      $('#ownerName').append('<option value="' + response[i].id + '">' + response[i].first_name + ' ' + response[i].last_name + '</option>');
+        // ownerNames.push(response[i].first_name + ' ' + response[i].last_name);
+      }
+    }
+  });
+} // end populateDropDown
+
 // function that adds owner to dropdown
 function register() {
   var ownerObject = {
-    ownerfirstname: $('#firstName').val(),
-    ownerlastname: $('#lastName').val()
+    first_name: $('#firstName').val(),
+    last_name: $('#lastName').val()
   }; // end ownerObject
   // TODO check if owner is arleady registered
   // send to database
@@ -33,7 +50,7 @@ function register() {
 
 // addPet to databse under owner
 function addPet () {
-  var ownerId = $('#ownerName').data('id');
+  var ownerId = $('#ownerName').val();
   var petObject = {
     id: ownerId,
     petname: $('#petName').val(),
@@ -47,8 +64,10 @@ function addPet () {
     data: petObject,
     success: function(response) {
       console.log( response );
+
     }
   });
+  setTimeout(getAll(), 1000);
 } // end addPet
 
 // get everything from database table
@@ -60,16 +79,15 @@ function getAll() {
     success: function(response) {
       console.log(response);
       // fill drop-down menu
-      $('#ownerName').empty();
       $('#listAll').empty();
       for (var i = 0; i < response.length; i++) {
-        $('#ownerName').append('<option data-id="' + response[i].id + '">' + response[i].ownerfirstname + ' ' + response[i].ownerlastname + '</option>');
         $('#listAll').append('<nav id="' + response[i].id + '" data-id="' + response[i].id + '"><input type="text" id="listOwnerName' + i + '"><input type="text" id="listPetName' + i + '"><input type="text" id="listBreed' + i + '"><input type="text" id="listColor' + i + '"><button id="updateButton" type="button">GO</button><button id="deleteButton" type="button">DEL</button><button id="checkInOut" type="button">IN</button></nav>');
-        $('#listOwnerName' + i + '').val(response[i].ownerfirstname + ' ' + response[i].ownerlastname);
-        $('#listPetName').val(response[i].petname);
-        $('#listBreed').val(response[i].breed);
-        $('#listColor').val(response[i].color);
+        $('#listOwnerName' + i + '').val(response[i].first_name + ' ' + response[i].last_name);
+        $('#listPetName' + i + '').val(response[i].pet_name);
+        $('#listBreed' + i + '').val(response[i].breed);
+        $('#listColor' + i + '').val(response[i].color);
       }
+      populateDropDown();
     } // end success
   }); // end AJAX
 } // end getAll
